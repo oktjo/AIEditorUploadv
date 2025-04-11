@@ -1,0 +1,41 @@
+@page "/ai-editor"
+@inject HttpClient Http
+@using Blazored.TextEditor
+
+<h3>AI Editor</h3>
+
+<BlazoredTextEditor @ref="textEditor" />
+
+<div class="mt-3">
+    <button @onclick="GenerateText">Generate</button>
+    <button @onclick="SummarizeText">Summarize</button>
+    <button @onclick="FixGrammar">FixGrammar</button>
+</div>
+
+<p>@responseText</p>
+
+@code {
+    private BlazoredTextEditor textEditor;
+    private string responseText;
+
+    private async Task GenerateText()
+    {
+        var content = await textEditor.GetText();
+        var result = await Http.PostAsJsonAsync("api/ai/generate", new { prompt = content });
+        responseText = await result.Content.ReadAsStringAsync();
+    }
+
+    private async Task SummarizeText()
+    {
+        var content = await textEditor.GetText();
+        var result = await Http.PostAsJsonAsync("api/ai/summarize", new { prompt = content });
+        responseText = await result.Content.ReadAsStringAsync();
+    }
+
+    private async Task FixGrammar()
+    {
+        var content = await textEditor.GetText();
+        var result = await Http.PostAsJsonAsync("api/ai/fix", new { prompt = content });
+        responseText = await result.Content.ReadAsStringAsync();
+    }
+}
